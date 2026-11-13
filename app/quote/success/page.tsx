@@ -1,0 +1,56 @@
+import { markQuotePaid, sheetConfigured } from "@/lib/sheet";
+import { checkoutConnected, readPaidSession } from "@/lib/stripe";
+
+export const dynamic = "force-dynamic";
+
+export default async function QuoteSuccessPage({ searchParams }: { searchParams: Promise<{ session_id?: string }> }) {
+  const { session_id: sessionId = "" } = await searchParams;
+  if (!checkoutConnected()) {
+    return (
+      <main style={card}>
+        <h1>Checkout is not connected</h1>
+        <p>No card was charged. Card numbers are never entered on this site.</p>
+        <a href="/#quote">Back to the quote</a>
+      </main>
+    );
+  }
+  const session = await readPaidSession(sessionId);
+  if (!session) {
+    return (
+      <main style={card}>
+        <h1>We could not read this Checkout session</h1>
+        <p>No card number is shown here. Payment details stay on Stripe.</p>
+        <a href="/#quote">Back to the quote</a>
+      </main>
+    );
+  }
+  let sheetNote = "";
+  if (session.paid && session.quoteId) {
+    try {
+      const updated = sheetConfigured() ? await markQuotePaid(session.quoteId) : false;
+      sheetNote = updated ? "This quote is marked paid." : "Stripe confirmed the payment. The sheet row was not updated.";
+    } catch {
+      sheetNote = "Stripe confirmed the payment. The sheet row was not updated.";
+    }
+  }
+  const amount = session.amountUsd == null ? "—" : new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(session.amountUsd);
+  return (
+    <main style={card}>
+      <h1>{session.paid ? "Payment received" : "Payment not completed"}</h1>
+      <p>Amount <strong>{amount}</strong></p>
+      <p>Quote <strong>{session.quoteId || "—"}</strong></p>
+      {sheetNote ? <p>{sheetNote}</p> : null}
+      <p>Card, Apple Pay, and Google Pay stay on Stripe. This page does not show a card number.</p>
+      <a href="/#quote">Back to the quote</a>
+    </main>
+  );
+}
+
+const card: React.CSSProperties = {
+  maxWidth: 640,
+  margin: "80px auto",
+  padding: 32,
+  background: "#fff7f4",
+  color: "#642003",
+  fontFamily: "var(--font-inter), Inter, sans-serif",
+};
