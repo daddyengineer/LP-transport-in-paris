@@ -3,7 +3,9 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "prebuild": "node scripts/skip-analytics-preload.mjs",
     "build": "next build",
+    "postinstall": "node scripts/skip-analytics-preload.mjs",
     "start": "next start -H 0.0.0.0 -p ${PORT:-3000}",
     "test": "tsx --test lib/*.test.ts"
   },

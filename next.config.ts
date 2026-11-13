@@ -1,4 +1,13 @@
+import { spawnSync } from "node:child_process";
 import type { NextConfig } from "next";
+
+const preloadPatch = spawnSync(process.execPath, ["scripts/skip-analytics-preload.mjs"], {
+  cwd: process.cwd(),
+  stdio: "inherit",
+});
+if (preloadPatch.status !== 0) {
+  throw new Error("analytics preload patch failed");
+}
 
 const nextConfig: NextConfig = {
   output: "standalone",
