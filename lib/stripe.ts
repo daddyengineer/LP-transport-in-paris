@@ -2,8 +2,37 @@ import { testSecretKey, usdCents } from "@/lib/quote";
 
 export type PaidSession = { id: string; paid: boolean; amountUsd: number | null; quoteId: string };
 
+const CHECKOUT_RETURN_HOSTS = new Set([
+  "www.transportinparis.com",
+  "transportinparis.com",
+  "transport-in-paris-production.vercel.app",
+]);
+
 function secret(): string | null {
   return testSecretKey(process.env.STRIPE_SECRET_KEY);
+}
+
+export function checkoutReturnOrigin(hostHeader: string | null | undefined): string | null {
+  const first = (hostHeader ?? "").split(",")[0]?.trim().toLowerCase() ?? "";
+  if (!first || /[/@\s]/.test(first)) return null;
+  const host = first.replace(/:\d+$/, "");
+  if (!CHECKOUT_RETURN_HOSTS.has(host)) return null;
+  return `https://${host}`;
+}
+
+function allowedReturnUrl(value: string, kind: "success" | "cancel"): boolean {
+  let url: URL;
+  try {
+    url = new URL(value);
+  } catch {
+    return false;
+  }
+  if (url.protocol !== "https:" || url.username || url.password) return false;
+  if (!CHECKOUT_RETURN_HOSTS.has(url.hostname)) return false;
+  if (kind === "success") {
+    return url.pathname === "/quote/success" && url.searchParams.get("session_id") === "{CHECKOUT_SESSION_ID}";
+  }
+  return url.pathname === "/" && url.hash === "#quote" && url.search === "";
 }
 
 export function checkoutConnected(): boolean {
@@ -15,6 +44,9 @@ export async function createPaymentSession(input: {
 }): Promise<string> {
   const key = secret();
   if (!key) throw new Error("checkout-not-connected");
+  if (!allowedReturnUrl(input.successUrl, "success") || !allowedReturnUrl(input.cancelUrl, "cancel")) {
+    throw new Error("return-url");
+  }
   const cents = usdCents(input.usd);
   if (!Number.isInteger(cents) || cents < 50) throw new Error("no-amount");
   const body = new URLSearchParams({
@@ -45,7 +77,7 @@ export async function createPaymentSession(input: {
 }
 
 export async function readPaidSession(sessionId: string): Promise<PaidSession | null> {
-  if (!/^cs_test_[A-Za-z0-9]+$/.test(sessionId)) return null;
+  if (!/^cs_(?:test|live)_[A-Za-z0-9]+$/.test(sessionId)) return null;
   const key = secret();
   if (!key) return null;
   const response = await fetch(`https://api.stripe.com/v1/checkout/sessions/${sessionId}`, {

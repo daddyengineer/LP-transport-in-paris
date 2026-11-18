@@ -160,5 +160,5 @@ export function validateQuote(input: QuoteInput): { ok: true; quote: ValidQuote 
 
 export function testSecretKey(value: string | undefined): string | null {
   const key = value?.trim() ?? "";
-  return key.startsWith("sk_test_") ? key : null;
+  return /^sk_(?:test|live)_[A-Za-z0-9]+$/.test(key) ? key : null;
 }

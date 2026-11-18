@@ -2,7 +2,7 @@ import { randomBytes } from "crypto";
 import { NextResponse } from "next/server";
 import { readQuoteBody, validateQuote, type ValidQuote } from "@/lib/quote";
 import { appendUnpaidQuote, type SheetRow } from "@/lib/sheet";
-import { checkoutConnected, createPaymentSession } from "@/lib/stripe";
+import { checkoutConnected, checkoutReturnOrigin, createPaymentSession } from "@/lib/stripe";
 
 export const dynamic = "force-dynamic";
 
@@ -63,9 +63,10 @@ export async function POST(request: Request) {
   if (!checkoutConnected()) {
     return NextResponse.json({ ok: true, saved: true, quoteId, message: "Checkout is not connected. The quote was saved and no card was charged." });
   }
-  const proto = request.headers.get("x-forwarded-proto") || "https";
-  const host = request.headers.get("x-forwarded-host") || request.headers.get("host") || "";
-  const site = `${proto}://${host}`;
+  const site = checkoutReturnOrigin(request.headers.get("x-forwarded-host") || request.headers.get("host"));
+  if (!site) {
+    return NextResponse.json({ ok: true, saved: true, quoteId, message: "Checkout could not be started. No card was charged." });
+  }
   try {
     const url = await createPaymentSession({
       usd: price.usd,
