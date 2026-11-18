@@ -95,12 +95,13 @@
   position: relative;
   display: flex;
   flex-direction: column;
+  align-items: stretch;
   gap: 14px;
   padding: 32px 16px;
   min-height: 415px;
-  overflow: hidden;
+  overflow: visible;
 }
-.m-heroMedia { position: absolute; inset: 0; z-index: 0; }
+.m-heroMedia { position: absolute; inset: 0; z-index: 0; overflow: hidden; }
 .m-heroMedia picture, .m-heroMedia img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .m-heroMedia img { opacity: 0.5; }
 .m-heroWash, .m-heroTint { position: absolute; inset: 0; }
@@ -127,20 +128,34 @@
   font-weight: 600;
 }
 .m-hero h1 {
+  width: 100%;
+  max-width: 100%;
   font-family: var(--font-outfit), "Outfit", sans-serif;
   font-size: 32px;
   font-weight: 700;
   line-height: 1.15;
   letter-spacing: 0;
+  white-space: normal;
+  overflow-wrap: break-word;
 }
-.m-lead { font-size: 15px; line-height: 1.5; }
-.m-stack { display: flex; flex-direction: column; gap: 10px; }
-.m-btn {
+.m-lead {
+  width: 100%;
+  max-width: 100%;
+  font-size: 15px;
+  line-height: 1.5;
+  white-space: normal;
+  overflow-wrap: break-word;
+}
+.m-stack { display: flex; flex-direction: column; gap: 10px; width: 100%; }
+.mobile-home a.m-btn,
+.mobile-home button.m-btn {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
   width: 100%;
+  max-width: 100%;
+  min-height: 50px;
   padding: 14px 24px;
   border: 0;
   border-radius: 999px;
@@ -148,10 +163,14 @@
   color: #fff;
   font-size: 18px;
   font-weight: 600;
+  line-height: 22px;
   text-align: center;
   text-decoration: none;
+  white-space: normal;
+  overflow: visible;
 }
-.m-btnLight {
+.mobile-home a.m-btnLight,
+.mobile-home button.m-btnLight {
   background: #fff;
   color: #642003;
   border: 1px solid #642003;
@@ -204,64 +223,101 @@
   font-size: 11px;
   font-weight: 600;
 }
-.m-fleetList { display: flex; flex-direction: column; gap: 10px; }
+.m-fleetList { display: flex; flex-direction: column; gap: 10px; width: 100%; min-width: 0; }
 .m-fleetCard {
-  position: relative;
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  height: auto;
   padding: 12px;
   border: 1px solid #e5d6cc;
   border-radius: 14px;
   background: #fff;
   box-shadow: 0 3px 12px rgba(99, 33, 3, 0.06);
+  color: #642003;
   text-align: left;
+  overflow: visible;
+  cursor: pointer;
 }
 .m-fleetCard.isOn { background: #fff7f4; border: 2.5px solid #f94b00; }
 .m-fleetPhoto {
-  grid-column: 1 / -1;
+  width: 100%;
   height: 84px;
   border: 1px dashed #d9c7bd;
   border-radius: 10px;
   background: #fff;
   overflow: hidden;
 }
-.m-fleetPhoto img { width: 100%; height: 100%; object-fit: contain; }
-.m-badges { display: flex; flex-wrap: wrap; gap: 6px; }
+.m-fleetPhoto picture, .m-fleetPhoto img { display: block; width: 100%; height: 100%; object-fit: contain; }
+.m-fleetBody {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "badges price"
+    "copy actions";
+  gap: 6px 8px;
+  align-items: start;
+  width: 100%;
+  min-width: 0;
+}
+.m-badges { grid-area: badges; display: flex; flex-wrap: wrap; gap: 6px; min-width: 0; }
 .m-badges span, .m-save {
   padding: 4px 8px;
   border: 1px solid #c7c7c7;
   border-radius: 999px;
   background: #fff;
+  color: #642003;
   font-size: 10px;
+  font-weight: 400;
+  line-height: 1.2;
+  white-space: nowrap;
 }
-.m-cap { display: flex; gap: 12px; margin-top: 6px; font-size: 12px; font-weight: 600; }
-.m-fleetCard h3 { margin: 2px 0 0; font-family: var(--font-outfit), "Outfit", sans-serif; font-size: 15px; }
-.m-model { color: #8c8c8c; font-size: 11px; }
-.m-priceCol { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; align-self: end; }
-.m-priceLine { display: flex; align-items: baseline; gap: 4px; white-space: nowrap; }
+.m-fleetCopy { grid-area: copy; min-width: 0; }
+.m-cap { display: flex; flex-wrap: wrap; gap: 12px; font-size: 12px; font-weight: 600; }
+.m-fleetCard h3 { margin: 2px 0 0; font-family: var(--font-outfit), "Outfit", sans-serif; font-size: 15px; font-weight: 700; line-height: 1.2; white-space: normal; }
+.m-model { color: #8c8c8c; font-size: 11px; line-height: 1.3; white-space: normal; overflow-wrap: anywhere; }
+.m-priceLine {
+  grid-area: price;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: baseline;
+  gap: 4px;
+  max-width: 148px;
+  margin: 0;
+  white-space: normal;
+}
 .m-priceLine small, .m-per { color: #8c8c8c; font-size: 9px; }
 .m-priceLine s { color: #8c8c8c; font-size: 11px; }
-.m-priceLine b { font-family: var(--font-outfit), "Outfit", sans-serif; font-size: 18px; }
-.m-save { border-color: #ffa100; background: #fff0eb; font-weight: 600; }
-.m-fleetActions { display: flex; align-items: center; justify-content: flex-end; gap: 6px; }
-.m-selected {
+.m-priceLine b { font-family: var(--font-outfit), "Outfit", sans-serif; font-size: 18px; font-weight: 700; }
+.m-save { border-color: #ffa100; background: #fff0eb; font-weight: 600; padding: 3px 6px; }
+.m-fleetActions { grid-area: actions; display: flex; align-items: center; justify-content: flex-end; align-self: end; gap: 6px; margin: 0; }
+.mobile-home button.m-select,
+.mobile-home .m-selected {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   padding: 8px 14px;
   border: 0;
   border-radius: 999px;
-  background: #f94b00;
   color: #fff;
   font-size: 14px;
   font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
 }
-.m-chev { color: #642003; font-size: 18px; line-height: 1; background: none; border: 0; padding: 0 2px; }
+.mobile-home button.m-select { background: #642003; }
+.mobile-home .m-selected { background: #f94b00; }
 
 .m-holiday { gap: 12px; padding: 24px 16px; background: #642003; color: #fff; }
 .m-holiday h2 { color: #fff; font-size: 18px; }
 .m-holiday p { font-size: 13px; line-height: 1.45; }
 .m-chips { display: flex; gap: 8px; flex-wrap: wrap; }
 .m-chips span { padding: 4px 10px; border: 1px solid #f94b00; border-radius: 12px; font-size: 12px; }
-.m-holiday .m-btn { background: #fff; color: #642003; }
+.mobile-home .m-holiday .m-btn { background: #fff; color: #642003; }
 
 .m-printemps {
   background: linear-gradient(149deg, #fff7f2 0%, #f4f1ec 50%, #dcf5e8 100%);
@@ -483,14 +539,22 @@
   border-radius: 12px;
   background: #fff;
 }
-.m-routeTop { display: flex; gap: 12px; align-items: center; }
+.m-routeTop { display: flex; gap: 12px; align-items: center; min-width: 0; max-width: 100%; }
 .m-routeThumb { width: 76px; height: 72px; flex: 0 0 76px; border-radius: 8px; overflow: hidden; border: 1px solid #8c8c8c; }
 .m-routeThumb img { width: 100%; height: 100%; object-fit: cover; }
-.m-route h3 { font-family: var(--font-outfit), "Outfit", sans-serif; font-size: 17px; line-height: 21px; }
-.m-routeMeta { color: #706158; font-size: 12px; }
-.m-fares { font-size: 12px; font-weight: 600; line-height: 1.45; }
+.m-routeCopy { flex: 1 1 auto; min-width: 0; max-width: 100%; }
+.m-route h3 {
+  font-family: var(--font-outfit), "Outfit", sans-serif;
+  font-size: 17px;
+  line-height: 21px;
+  font-weight: 700;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.m-routeMeta { color: #706158; font-size: 12px; line-height: 1.4; white-space: normal; overflow-wrap: anywhere; }
+.m-fares { font-size: 12px; font-weight: 600; line-height: 1.45; white-space: normal; overflow-wrap: anywhere; }
 .m-route ul { margin: 0; padding: 0; list-style: none; font-size: 12px; line-height: 1.5; }
-.m-route .m-btn { padding: 12px 16px; font-size: 14px; }
+.mobile-home .m-route .m-btn { min-height: 44px; padding: 12px 16px; font-size: 16px; line-height: 20px; }
 .m-seo { padding: 0; border: 0; background: none; color: #706158; font-size: 11px; text-align: left; }
 
 .m-quote { gap: 12px; }
@@ -596,7 +660,7 @@
 .m-footer { display: flex; flex-direction: column; gap: 14px; padding: 32px 16px; background: #642003; color: #fff; }
 .m-footer h2 { color: #fff; font-family: var(--font-outfit), "Outfit", sans-serif; font-size: 20px; }
 .m-footer p { font-size: 13px; line-height: 1.6; }
-.m-footer .m-btn { background: #fff; color: #642003; }
+.mobile-home .m-footer .m-btn { background: #fff; color: #642003; }
 .m-secure { font-size: 13px; font-weight: 600; }
 .m-pays { display: flex; gap: 8px; align-items: center; }
 .m-pays img { width: 48px; height: 30px; object-fit: contain; background: #fff; border-radius: 6px; }

@@ -12,10 +12,10 @@ const SMS = `sms:+13322961375?body=${encodeURIComponent("Hi, I'd like a private 
 const FLEET = [
   { id: "premium-van", name: "Premium Van", model: "Mercedes V-Class or similar", pax: 7, bags: 7, fromPrice: 170, priorPrice: 220, badges: ["Child seat", "Wi-Fi", "Family"], image: "/images/fleet-premium-van.jpg", alt: "Black Mercedes V-Class" },
   { id: "vip-van", name: "VIP Van", model: "Mercedes Sprinter or similar", pax: 8, bags: 8, fromPrice: 180, priorPrice: 230, badges: ["Child seat", "Water", "Family"], image: "/images/fleet-vip-van.jpg", alt: "Black Mercedes Sprinter" },
-  { id: "economy-van", name: "Economy Van", model: "Nissan Combi Primastar or similar", pax: 7, bags: 6, fromPrice: 150, priorPrice: 200, badges: ["Child seat", "Family"], image: "/images/fleet-economy-van.jpg", alt: "Black economy van" },
-  { id: "compact-suv", name: "Compact SUV", model: "Lexus RX200 / Peugeot 5008 or similar", pax: 3, bags: 4, fromPrice: 120, priorPrice: 170, badges: ["Child seat", "Couple"], image: "/images/fleet-compact-suv.jpg", alt: "Black compact SUV" },
-  { id: "big-van", name: "Big Van", model: "Mercedes Sprinter or similar", pax: 16, bags: 12, fromPrice: 280, priorPrice: 330, badges: ["Group", "Child seat", "Water"], image: "/images/fleet-vip-van.jpg", alt: "Black group van" },
-  { id: "luxury-sedan", name: "Luxury Sedan", model: "Mercedes S-Class or similar", pax: 3, bags: 3, fromPrice: 350, priorPrice: 400, badges: ["Water", "Wi-Fi", "Couple"], image: "/images/fleet-luxury-sedan.jpg", alt: "Black Mercedes S-Class" },
+  { id: "economy-van", name: "Economy Van", model: "Nissan Primastar or similar", pax: 7, bags: 6, fromPrice: 150, priorPrice: 200, badges: ["Child seat", "Water", "Family"], image: "/images/fleet-economy-van.jpg", alt: "Black economy van" },
+  { id: "compact-suv", name: "Compact SUV", model: "Lexus RX / Peugeot 5008 or similar", pax: 5, bags: 4, fromPrice: 120, priorPrice: 170, badges: ["Child seat", "Couple"], image: "/images/fleet-compact-suv.jpg", alt: "Black compact SUV" },
+  { id: "big-van", name: "Big Van", model: "Mercedes Sprinter or similar", pax: 16, bags: 12, fromPrice: 280, priorPrice: 330, badges: ["Big group", "Child seat", "Water"], image: "/images/fleet-vip-van.jpg", alt: "Black group van" },
+  { id: "luxury-sedan", name: "Luxury Sedan", model: "Mercedes E-class or similar", pax: 3, bags: 3, fromPrice: 350, priorPrice: 400, badges: ["Water", "Wi-Fi", "Couple"], image: "/images/fleet-luxury-sedan.jpg", alt: "Black Mercedes sedan" },
 ] as const;
 
 const PLACES = [
@@ -249,7 +249,7 @@ export default function MobileHome() {
         <p className="m-pill">Christmas & New Year 2026 — booking open</p>
         <p className="m-greenPill">Free Printemps VIP Shopping Pass</p>
         <h1>Paris Made Effortless</h1>
-        <p className="m-lead">Private airport transfers & chauffeurs for North American travelers. Fixed price in USD, English-speaking drivers, we track your flight.</p>
+        <p className="m-lead">Private airport transfers &amp; chauffeurs for North American travelers. Fixed price in USD, English-speaking drivers, we track your flight.</p>
         <div className="m-stack">
           <a className="m-btn" href="#m-quote" onClick={(event) => { event.preventDefault(); go("m-quote"); }}>Book Now !</a>
           <a className="m-btn m-btnLight" href={SMS}><img src="/icons/sms.svg" alt="" width={20} height={20} />Text us</a>
@@ -286,20 +286,24 @@ export default function MobileHome() {
           {FLEET.map((item) => {
             const selected = item.id === vehicleId;
             return (
-              <article className={selected ? "m-fleetCard isOn" : "m-fleetCard"} key={item.id}>
+              <article
+                className={selected ? "m-fleetCard isOn" : "m-fleetCard"}
+                key={item.id}
+                onClick={() => { setVehicleId(item.id); setError(""); }}
+              >
                 <div className="m-fleetPhoto"><Picture src={item.image} alt={item.alt} /></div>
-                <div>
+                <div className="m-fleetBody">
                   <div className="m-badges">{item.badges.map((badge) => <span key={badge}>{badge}</span>)}</div>
-                  <p className="m-cap"><span>Pax: {item.pax}</span><span>Bags: {item.bags}</span></p>
-                  <h3>{item.name}</h3>
-                  <p className="m-model">{item.model}</p>
-                </div>
-                <div className="m-priceCol">
                   <p className="m-priceLine"><small>from</small><s>{money(item.priorPrice)}</s><b>{money(item.fromPrice)}</b><span className="m-per">/ transfer</span></p>
-                  <p className="m-fleetActions">
+                  <div className="m-fleetCopy">
+                    <p className="m-cap"><span>Pax: {item.pax}</span><span>Bags: {item.bags}</span></p>
+                    <h3>{item.name}</h3>
+                    <p className="m-model">{item.model}</p>
+                  </div>
+                  <div className="m-fleetActions">
                     <span className="m-save">Save ${item.priorPrice - item.fromPrice}</span>
-                    {selected ? <span className="m-selected">✓ Selected</span> : <button className="m-chev" type="button" aria-label={`Select ${item.name}`} onClick={() => { setVehicleId(item.id); setError(""); }}>›</button>}
-                  </p>
+                    {selected ? <span className="m-selected">✓ Selected</span> : <button className="m-select" type="button" onClick={(event) => { event.stopPropagation(); setVehicleId(item.id); setError(""); }}>Select</button>}
+                  </div>
                 </div>
               </article>
             );
@@ -385,7 +389,7 @@ export default function MobileHome() {
           <p>About 85 km from Paris — rideshare pickups there are rare and pricey. transportinparis is usually the simpler option.</p>
           <button className="m-textBtn" type="button" onClick={() => { setFilter("Beauvais"); go("m-routes"); }}>See Beauvais route →</button>
         </div>
-        <button className="m-btn" type="button" onClick={() => go("m-quote")}>Book fixed-price now</button>
+        <button className="m-btn" type="button" onClick={() => go("m-quote")}>Book Fixed-price Now</button>
       </section>
 
       <section className="m-section m-videos" id="m-reviews" data-section="reviews">
@@ -429,7 +433,7 @@ export default function MobileHome() {
             <article className="m-route" key={route.id}>
               <div className="m-routeTop">
                 <div className="m-routeThumb"><Picture src={route.thumb} alt={route.alt} /></div>
-                <div>
+                <div className="m-routeCopy">
                   <h3>{route.title}</h3>
                   <p className="m-routeMeta">{route.meta}</p>
                 </div>
@@ -441,7 +445,6 @@ export default function MobileHome() {
             </article>
           ))}
         </div>
-        <p className="m-ux">UX: 7 routes: CDG, Orly, Beauvais, Disneyland, Versailles, Normandy, Champagne. Scroll cards / tap a destination filter. &quot;Book this route&quot; → prefills Pickup / Drop-off in form. Each card links to its SEO page.</p>
       </section>
 
       <section className="m-section m-quote" id="m-quote" data-section="quote">
