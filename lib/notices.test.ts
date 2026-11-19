@@ -1,9 +1,9 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { bookingMessage, cronAuthorized, deliverBookingNotices, paymentMessage, serviceDateTomorrow } from "./notices";
+import { bookingMessage, cronAuthorized, deliverBookingNotices, paymentMessage, paymentOrderMerge, serviceDateTomorrow } from "./notices";
 import { dueForReminder, type StoredQuote } from "./sheet";
 import { sendTelegram } from "./telegram";
-import { sendTransactionalEmail } from "./zoho";
+import { ORDER_CONFIRMATION_TEMPLATE_KEY, sendTemplateEmail, sendTransactionalEmail } from "./zoho";
 import { priceQuote, validateQuote, type QuoteInput } from "./quote";
 
 const ENV_KEYS = ["ZOHO_CPAAS_HOST", "ZOHO_CPAAS_AGENT_ALIAS", "ZOHO_CPAAS_API_KEY", "TELEGRAM_BOT_TOKEN", "TELEGRAM_CHAT_ID"] as const;
@@ -122,6 +122,59 @@ test("telegram posts to the chat and skips when the token is missing", async () 
     globalThis.fetch = (async () => new Response(JSON.stringify({ ok: false, error_code: 400, description: "hidden" }), { status: 400 })) as typeof fetch;
     const rejected = await sendTelegram("hello");
     assert.deepEqual(rejected, { ok: false, reason: "rejected", httpStatus: 400, errorCode: "400" });
+  } finally {
+    globalThis.fetch = previousFetch;
+    restoreEnv(saved);
+  }
+});
+
+test("order confirmation uses the existing template and quote fields", async () => {
+  const saved = saveEnv();
+  const previousFetch = globalThis.fetch;
+  process.env.ZOHO_CPAAS_HOST = "https://cpaas.zoho.com/ignored";
+  process.env.ZOHO_CPAAS_AGENT_ALIAS = "agent-alias-test";
+  process.env.ZOHO_CPAAS_API_KEY = "Zoho-enczapikey unit-test-value";
+  let url = "";
+  let body = "";
+  globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
+    url = String(input);
+    body = String(init?.body || "");
+    return new Response(JSON.stringify({ data: [{ code: "EM_104", message: "OK" }], message: "OK" }), { status: 201 });
+  }) as typeof fetch;
+  try {
+    const merge = paymentOrderMerge(stored(), "q_test", 170);
+    assert.equal(merge.name, "Notice Test");
+    assert.equal(merge.route, "CDG to Paris");
+    assert.equal(merge.date, "11/20/2026 10:00 AM");
+    assert.equal(merge.vehicle, "Premium Van");
+    assert.equal(merge.usd_amount, "USD 170");
+    assert.equal(merge.quote_id, "q_test");
+    assert.equal(paymentOrderMerge(stored({ priceUsd: "180" }), "q_test", null).usd_amount, "USD 180");
+    const result = await sendTemplateEmail({
+      to: "guest@example.com",
+      toName: "Notice Test",
+      templateKey: ORDER_CONFIRMATION_TEMPLATE_KEY,
+      mergeInfo: merge,
+      clientReference: "q_test-order",
+    });
+    assert.equal(result.ok, true);
+    assert.equal(url, "https://cpaas.zoho.com/v1.1/email/template");
+    const parsed = JSON.parse(body) as { template_key?: string; subject?: string; htmlbody?: string; textbody?: string; merge_info?: Record<string, string>; to?: { merge_info?: Record<string, string> }[] };
+    assert.equal(parsed.template_key, ORDER_CONFIRMATION_TEMPLATE_KEY);
+    assert.equal(parsed.subject, undefined);
+    assert.equal(parsed.htmlbody, undefined);
+    assert.equal(parsed.textbody, undefined);
+    assert.equal(parsed.merge_info?.name, "Notice Test");
+    assert.equal(parsed.merge_info?.route, "CDG to Paris");
+    assert.equal(parsed.merge_info?.usd_amount, "USD 170");
+    assert.equal(parsed.merge_info?.quote_id, "q_test");
+    assert.equal(parsed.to?.[0]?.merge_info?.vehicle, "Premium Van");
+    assert.doesNotMatch(body, /unit-test-value|Your Paris transfer invoice/);
+    delete process.env.ZOHO_CPAAS_AGENT_ALIAS;
+    const missing = await sendTemplateEmail({
+      to: "guest@example.com", toName: "Notice Test", templateKey: ORDER_CONFIRMATION_TEMPLATE_KEY, mergeInfo: merge, clientReference: "q_test-order",
+    });
+    assert.deepEqual(missing, { ok: false, reason: "not-connected" });
   } finally {
     globalThis.fetch = previousFetch;
     restoreEnv(saved);

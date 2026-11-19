@@ -2,7 +2,7 @@ import { timingSafeEqual } from "crypto";
 import type { ValidQuote } from "@/lib/quote";
 import { listReminderQuotes, readStoredQuote, setQuoteNotice, type StoredQuote } from "@/lib/sheet";
 import { sendTelegram, type TelegramResult } from "@/lib/telegram";
-import { sendTransactionalEmail, type MailResult } from "@/lib/zoho";
+import { ORDER_CONFIRMATION_TEMPLATE_KEY, sendTemplateEmail, sendTransactionalEmail, type MailResult } from "@/lib/zoho";
 
 function oneLine(value: string): string {
   return value.replace(/[\r\n]+/g, " ").trim();
@@ -102,6 +102,30 @@ export async function deliverBookingNotices(quote: ValidQuote, quoteId: string):
   }
 }
 
+function usdAmount(amountUsd: number | null, priceUsd: string): string {
+  if (amountUsd != null && Number.isFinite(amountUsd)) {
+    return `USD ${Number.isInteger(amountUsd) ? String(amountUsd) : amountUsd.toFixed(2)}`;
+  }
+  const stored = oneLine(priceUsd);
+  return stored ? `USD ${stored}` : "USD —";
+}
+
+export function paymentOrderMerge(quote: StoredQuote, quoteId: string, amountUsd: number | null): Record<string, string> {
+  const amount = usdAmount(amountUsd, quote.priceUsd);
+  const id = oneLine(quoteId);
+  return {
+    name: oneLine(quote.name),
+    route: [oneLine(quote.pickup), oneLine(quote.dropoff)].filter(Boolean).join(" to "),
+    date: [oneLine(quote.date), oneLine(quote.time)].filter(Boolean).join(" "),
+    vehicle: oneLine(quote.vehicle),
+    usd_amount: amount,
+    amount,
+    "USD amount": amount,
+    quote_id: id,
+    "quote id": id,
+  };
+}
+
 export async function deliverPaymentNotices(input: { quoteId: string; amountUsd: number | null; receiptUrl: string }): Promise<void> {
   if (!input.quoteId) return;
   let stored: StoredQuote | null = null;
@@ -113,32 +137,22 @@ export async function deliverPaymentNotices(input: { quoteId: string; amountUsd:
   }
   if (!stored) return;
   if (stored.invoiceSent !== "yes" && stored.email) {
-    const amount = input.amountUsd == null ? "USD —" : `USD ${input.amountUsd}`;
-    const receipt = input.receiptUrl.startsWith("https://") ? `Receipt: ${input.receiptUrl}` : "";
-    const lines = [
-      `Hello ${oneLine(stored.name) || "there"},`,
-      "Payment received for your Paris transfer.",
-      `Quote: ${oneLine(input.quoteId)}`,
-      `Amount: ${amount}`,
-      receipt,
-    ].filter(Boolean);
     try {
-      const email = await sendTransactionalEmail({
+      const email = await sendTemplateEmail({
         to: stored.email,
         toName: stored.name,
-        subject: "Your Paris transfer invoice",
-        text: lines.join("\n"),
-        html: htmlOf(lines),
-        clientReference: `${input.quoteId}-invoice`,
+        templateKey: ORDER_CONFIRMATION_TEMPLATE_KEY,
+        mergeInfo: paymentOrderMerge(stored, input.quoteId, input.amountUsd),
+        clientReference: `${input.quoteId}-order`,
       });
       if (email.ok) {
         const marked = await setQuoteNotice(input.quoteId, "invoice_sent", "yes").catch(() => false);
-        if (!marked) console.error("invoice notice was not marked");
+        if (!marked) console.error("order confirmation notice was not marked");
       } else {
-        logMail("zoho invoice was not sent", email);
+        logMail("zoho order confirmation was not sent", email);
       }
     } catch {
-      console.error("zoho invoice was not sent", "network");
+      console.error("zoho order confirmation was not sent", "network");
     }
   }
   if (stored.paymentNoticeSent !== "yes") {
