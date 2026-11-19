@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { priceQuote, validateQuote, type QuoteInput } from "@/lib/quote";
 import photos from "./photos.json";
 
@@ -141,6 +141,129 @@ function formatPhone(value: string) {
 
 function toInput(trip: Trip, contact: Contact): QuoteInput {
   return { ...trip, ...contact, smsOptIn: false };
+}
+
+const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+const WEEKDAYS = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
+
+function parseMdy(value: string): Date | null {
+  const match = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(value.trim());
+  if (!match) return null;
+  const month = Number(match[1]);
+  const day = Number(match[2]);
+  const year = Number(match[3]);
+  const date = new Date(year, month - 1, day);
+  if (date.getFullYear() !== year || date.getMonth() !== month - 1 || date.getDate() !== day) return null;
+  return date;
+}
+
+function formatMdy(date: Date): string {
+  return `${String(date.getMonth() + 1).padStart(2, "0")}/${String(date.getDate()).padStart(2, "0")}/${date.getFullYear()}`;
+}
+
+function sameDay(a: Date, b: Date): boolean {
+  return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+}
+
+function DateField({ id, label, value, onChange }: { id: string; label: string; value: string; onChange: (value: string) => void }) {
+  const [open, setOpen] = useState(false);
+  const [view, setView] = useState(() => new Date());
+  const rootRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    rootRef.current?.querySelector(".m-cal")?.scrollIntoView({ block: "nearest" });
+    function onPointer(event: PointerEvent) {
+      if (!rootRef.current?.contains(event.target as Node)) setOpen(false);
+    }
+    function onKey(event: KeyboardEvent) {
+      if (event.key === "Escape") setOpen(false);
+    }
+    document.addEventListener("pointerdown", onPointer);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("pointerdown", onPointer);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+
+  function show() {
+    const selected = parseMdy(value) ?? new Date();
+    setView(new Date(selected.getFullYear(), selected.getMonth(), 1));
+    setOpen(true);
+  }
+
+  const year = view.getFullYear();
+  const month = view.getMonth();
+  const selected = parseMdy(value);
+  const today = new Date();
+  const lead = new Date(year, month, 1).getDay();
+  const count = new Date(year, month + 1, 0).getDate();
+
+  return (
+    <div className={open ? "m-date isOpen" : "m-date"} ref={rootRef}>
+      <input
+        id={id}
+        className="m-input"
+        readOnly
+        inputMode="none"
+        placeholder="MM/DD/YYYY"
+        value={value}
+        aria-haspopup="dialog"
+        aria-expanded={open}
+        aria-controls={open ? `${id}-cal` : undefined}
+        onClick={() => {
+          if (open) setOpen(false);
+          else show();
+        }}
+        onKeyDown={(event) => {
+          if (event.key === "Enter" || event.key === " " || event.key === "ArrowDown") {
+            event.preventDefault();
+            show();
+          }
+        }}
+      />
+      <span className="m-calIcon" aria-hidden="true">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+          <rect x="3" y="5" width="18" height="16" rx="2" stroke="currentColor" strokeWidth="1.8" />
+          <path d="M3 10h18M8 3v4M16 3v4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+        </svg>
+      </span>
+      {open ? (
+        <div className="m-cal" id={`${id}-cal`} role="dialog" aria-label={`${label} calendar`}>
+          <div className="m-calHead">
+            <button type="button" aria-label="Previous month" onClick={() => setView(new Date(year, month - 1, 1))}>‹</button>
+            <strong>{MONTHS[month]} {year}</strong>
+            <button type="button" aria-label="Next month" onClick={() => setView(new Date(year, month + 1, 1))}>›</button>
+          </div>
+          <div className="m-calWeek" aria-hidden="true">{WEEKDAYS.map((day) => <span key={day}>{day}</span>)}</div>
+          <div className="m-calGrid">
+            {Array.from({ length: lead + count }, (_, index) => {
+              const day = index < lead ? null : index - lead + 1;
+              if (day == null) return <span key={`pad-${index}`} />;
+              const date = new Date(year, month, day);
+              const isOn = selected ? sameDay(selected, date) : false;
+              return (
+                <button
+                  key={day}
+                  type="button"
+                  className={[isOn ? "isOn" : "", sameDay(today, date) ? "isToday" : ""].filter(Boolean).join(" ")}
+                  aria-label={`${MONTHS[month]} ${day}, ${year}`}
+                  aria-pressed={isOn}
+                  onClick={() => {
+                    onChange(formatMdy(date));
+                    setOpen(false);
+                  }}
+                >
+                  {day}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      ) : null}
+    </div>
+  );
 }
 
 export default function MobileHome() {
@@ -497,9 +620,10 @@ export default function MobileHome() {
                 <div className="m-suggest"><p>SUGGESTED</p>{ideas.map((place) => <button key={place} type="button" onClick={() => { patchTrip({ dropoff: place }); setSuggest(""); }}>{place}<small>Suggested stop</small></button>)}</div>
               ) : null}
               <div className="m-split">
-                <label className="m-field m-grow"><span>Date *</span>
-                  <input className="m-input" inputMode="numeric" placeholder="MM/DD/YYYY" value={current.date} onChange={(event) => patchTrip({ date: event.target.value })} />
-                </label>
+                <div className="m-field m-grow">
+                  <label className="m-label" htmlFor="m-date">Date *</label>
+                  <DateField id="m-date" label="Date" value={current.date} onChange={(date) => patchTrip({ date })} />
+                </div>
                 <label className="m-field m-grow"><span>Time *</span>
                   <select className="m-input" value={current.time} onChange={(event) => patchTrip({ time: event.target.value })}>
                     <option value="">hh:mm AM/PM</option>
@@ -509,9 +633,10 @@ export default function MobileHome() {
               </div>
               {current.tripType === "return" ? (
                 <div className="m-split">
-                  <label className="m-field m-grow"><span>Return date *</span>
-                    <input className="m-input" inputMode="numeric" placeholder="MM/DD/YYYY" value={current.returnDate} onChange={(event) => patchTrip({ returnDate: event.target.value })} />
-                  </label>
+                  <div className="m-field m-grow">
+                    <label className="m-label" htmlFor="m-return-date">Return date *</label>
+                    <DateField id="m-return-date" label="Return date" value={current.returnDate} onChange={(date) => patchTrip({ returnDate: date })} />
+                  </div>
                   <label className="m-field m-grow"><span>Return time *</span>
                     <select className="m-input" value={current.returnTime} onChange={(event) => patchTrip({ returnTime: event.target.value })}>
                       <option value="">hh:mm AM/PM</option>

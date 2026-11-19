@@ -605,6 +605,56 @@ video.m-poster { object-fit: cover; object-position: center center; }
   border-radius: 10px;
   background: #fff;
 }
+.m-date { position: relative; }
+.m-date.isOpen { z-index: 5; }
+.m-date .m-input { padding-right: 40px; cursor: pointer; }
+.m-date .m-calIcon {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 48px;
+  color: #642003;
+  pointer-events: none;
+}
+.m-cal {
+  position: absolute;
+  z-index: 6;
+  top: calc(100% + 6px);
+  left: 0;
+  width: 280px;
+  max-width: calc(100vw - 48px);
+  padding: 10px;
+  border: 1px solid #e5d6cc;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 8px 24px rgba(100, 32, 3, 0.16);
+}
+.m-calHead { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 8px; }
+.m-calHead strong { font-size: 14px; font-weight: 700; }
+.m-calHead button {
+  width: 36px;
+  height: 36px;
+  border: 1px solid #e5d6cc;
+  border-radius: 8px;
+  background: #fff;
+  font-size: 18px;
+  line-height: 1;
+}
+.m-calWeek, .m-calGrid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; text-align: center; }
+.m-calWeek span { padding: 4px 0; color: #8c8c8c; font-size: 11px; font-weight: 700; }
+.m-calGrid button {
+  height: 36px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  font-size: 14px;
+  font-weight: 600;
+}
+.m-calGrid button.isToday { box-shadow: inset 0 0 0 1px #f94b00; }
+.m-calGrid button.isOn { background: #642003; color: #fff; box-shadow: none; }
 .m-card select { font-size: 13px; }
 .m-card textarea { min-height: 88px; resize: vertical; }
 .m-suggest { display: flex; flex-direction: column; border: 1px solid #e5d6cc; border-radius: 10px; overflow: hidden; }
