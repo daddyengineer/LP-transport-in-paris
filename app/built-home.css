@@ -42,7 +42,21 @@
 .home_dateWrap__dt01{position:relative;flex:1;min-width:0;display:flex;align-items:center;min-height:44px;cursor:pointer}
 .home_dateWrap__dt01>span{font-size:15px;line-height:1.2;pointer-events:none;color:#642003}
 .home_datePh__dt02{color:#8a5a45!important}
-.home_dateWrap__dt01 input[type=date]{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:pointer;border:0}
+.home_dateWrap__dt01 input.deskDateHit{cursor:pointer}
+.home_dateWrap__dt01 input.deskDateHit::placeholder{color:#8a5a45;opacity:1}
+.home_dateWrap__dt01.isOpen{z-index:8}
+.home_booking__BdDXq:has(.home_dateWrap__dt01.isOpen){z-index:5}
+.home_booking__BdDXq:has(.home_dateWrap__dt01.isOpen) .home_stack__7eKp8{overflow:visible;position:relative;z-index:4}
+.home_field__msjf7:has(.home_dateWrap__dt01.isOpen){position:relative;z-index:5}
+.home_dateWrap__dt01 .deskCal{position:absolute;z-index:6;top:calc(100% + 6px);left:0;width:280px;padding:10px;border:1px solid #e5d6cc;border-radius:12px;background:#fff;box-shadow:0 8px 24px rgba(100,32,3,.16)}
+.home_dateWrap__dt01 .deskCalHead{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
+.home_dateWrap__dt01 .deskCalHead strong{font-size:14px;font-weight:700}
+.home_dateWrap__dt01 .deskCalHead button{width:36px;height:36px;border:1px solid #e5d6cc;border-radius:8px;background:#fff;font-size:18px;line-height:1}
+.home_dateWrap__dt01 .deskCalWeek,.home_dateWrap__dt01 .deskCalGrid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;text-align:center}
+.home_dateWrap__dt01 .deskCalWeek span{padding:4px 0;color:#8c8c8c;font-size:11px;font-weight:700}
+.home_dateWrap__dt01 .deskCalGrid button{height:36px;border:0;border-radius:8px;background:transparent;font-size:14px;font-weight:600}
+.home_dateWrap__dt01 .deskCalGrid button.isToday{box-shadow:inset 0 0 0 1px #f94b00}
+.home_dateWrap__dt01 .deskCalGrid button.isOn{background:#642003;color:#fff;box-shadow:none}
 .home_field__msjf7 select{flex:1;min-width:140px}
 .home_picture__pic{display:contents}
 
