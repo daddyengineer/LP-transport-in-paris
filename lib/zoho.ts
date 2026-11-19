@@ -116,7 +116,7 @@ export async function sendTemplateEmail(input: {
   return postMail("/v1.1/email/template", {
     template_key: templateKey,
     from: MAIL_FROM,
-    to: [{ email_address: to, merge_info: mergeInfo }],
+    to: [{ email_address: to }],
     reply_to: [{ address: MAIL_FROM.address, name: MAIL_FROM.name }],
     merge_info: mergeInfo,
     client_reference: input.clientReference.slice(0, 100),

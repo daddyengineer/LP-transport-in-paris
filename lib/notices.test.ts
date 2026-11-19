@@ -168,7 +168,8 @@ test("order confirmation uses the existing template and quote fields", async () 
     assert.equal(parsed.merge_info?.route, "CDG to Paris");
     assert.equal(parsed.merge_info?.usd_amount, "USD 170");
     assert.equal(parsed.merge_info?.quote_id, "q_test");
-    assert.equal(parsed.to?.[0]?.merge_info?.vehicle, "Premium Van");
+    assert.equal(parsed.merge_info?.vehicle, "Premium Van");
+    assert.equal(parsed.to?.[0]?.merge_info, undefined);
     assert.doesNotMatch(body, /unit-test-value|Your Paris transfer invoice/);
     delete process.env.ZOHO_CPAAS_AGENT_ALIAS;
     const missing = await sendTemplateEmail({
