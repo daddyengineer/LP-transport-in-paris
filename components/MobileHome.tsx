@@ -38,21 +38,21 @@ const TIMES = (() => {
 })();
 
 const ROUTES = [
-  { id: "cdg", title: "CDG (Charles de Gaulle)", meta: "~45–60 min · 30 km", filter: "CDG", bullets: ["Meet & greet inside arrivals", "Terminal guide 2E / 2F / 1", "Free waiting if flight is delayed"], seo: "/cdg-airport-transfer  →", pickup: "CDG · Paris Charles de Gaulle Airport", dropoff: "Le Marais hotel, Paris", service: "airport", thumb: "/images/route-cdg.jpg", alt: "Aircraft at a jet bridge during sunset" },
-  { id: "ory", title: "Orly (ORY)", meta: "~35–45 min · 18 km", filter: "Orly", bullets: ["Pickup at Orly 1–4", "Intra-Europe & US connections"], seo: "/orly-airport-transfer  →", pickup: "ORY · Paris Orly Airport", dropoff: "Le Marais hotel, Paris", service: "airport", thumb: "/images/route-orly.jpg", alt: "Paris Orly terminal at dusk" },
-  { id: "bva", title: "Beauvais (BVA)", meta: "~75–90 min · 85 km", filter: "Beauvais", bullets: ["Far more comfortable than the shuttle bus", "Door-to-door, fixed price"], seo: "/beauvais-airport-transfer  →", pickup: "BVA · Paris Beauvais Airport", dropoff: "Le Marais hotel, Paris", service: "airport", thumb: "/images/route-beauvais.jpg", alt: "Beauvais airport terminal and control tower" },
-  { id: "disney", title: "Disneyland Paris", meta: "~45 min · 40 km", filter: "Disneyland", bullets: ["Free child seats, large family vans", "Direct from CDG or your Paris hotel"], seo: "/disneyland-paris-transfer  →", pickup: "Le Marais hotel, Paris", dropoff: "Disneyland Paris", service: "private", thumb: "/images/route-disney.jpg", alt: "Disneyland Paris castle lit at night" },
-  { id: "versailles", title: "Versailles", meta: "Half-day · ~40 min each way", filter: "Versailles", bullets: ["Driver waits during your visit", "Palace ticket option"], seo: "/versailles-private-trip  →", pickup: "Le Marais hotel, Paris", dropoff: "Palace of Versailles", service: "private", thumb: "/images/route-versailles.jpg", alt: "Palace of Versailles courtyard at sunset" },
-  { id: "normandy", title: "Normandy (Omaha Beach Memorial)", meta: "Full day · ~3 h each way", filter: "Normandy", bullets: ["D-Day beaches & American Cemetery", "A favorite with US travelers"], seo: "/normandy-day-trip  →", pickup: "Le Marais hotel, Paris", dropoff: "Normandy American Cemetery", service: "private", thumb: "/images/route-normandy.jpg", alt: "Omaha Beach memorial sculpture on the sand" },
-  { id: "champagne", title: "Champagne (Reims / Épernay)", meta: "Full day · ~1 h 45 each way", filter: "Champagne", bullets: ["Visit champagne houses", "A strong New Year day trip"], seo: "/champagne-day-trip  →", pickup: "Le Marais hotel, Paris", dropoff: "Champagne, Reims", service: "private", thumb: "/images/route-champagne.jpg", alt: "Ripe grapes on the vine in a Champagne vineyard" },
+  { id: "cdg", title: "CDG (Charles de Gaulle)", meta: "~45–60 min · 30 km", filter: "CDG", bullets: ["Meet & greet inside arrivals", "Terminal guide 2E / 2F / 1", "Free waiting if flight is delayed"], pickup: "CDG · Paris Charles de Gaulle Airport", dropoff: "Le Marais hotel, Paris", service: "airport", thumb: "/images/route-cdg.jpg", alt: "Aircraft at a jet bridge during sunset" },
+  { id: "ory", title: "Orly (ORY)", meta: "~35–45 min · 18 km", filter: "Orly", bullets: ["Pickup at Orly 1–4", "Intra-Europe & US connections"], pickup: "ORY · Paris Orly Airport", dropoff: "Le Marais hotel, Paris", service: "airport", thumb: "/images/route-orly.jpg", alt: "Paris Orly terminal at dusk" },
+  { id: "bva", title: "Beauvais (BVA)", meta: "~75–90 min · 85 km", filter: "Beauvais", bullets: ["Far more comfortable than the shuttle bus", "Door-to-door, fixed price"], pickup: "BVA · Paris Beauvais Airport", dropoff: "Le Marais hotel, Paris", service: "airport", thumb: "/images/route-beauvais.jpg", alt: "Beauvais airport terminal and control tower" },
+  { id: "disney", title: "Disneyland Paris", meta: "~45 min · 40 km", filter: "Disneyland", bullets: ["Free child seats, large family vans", "Direct from CDG or your Paris hotel"], pickup: "Le Marais hotel, Paris", dropoff: "Disneyland Paris", service: "private", thumb: "/images/route-disney.jpg", alt: "Disneyland Paris castle lit at night" },
+  { id: "versailles", title: "Versailles", meta: "Half-day · ~40 min each way", filter: "Versailles", bullets: ["Driver waits during your visit", "Palace ticket option"], pickup: "Le Marais hotel, Paris", dropoff: "Palace of Versailles", service: "private", thumb: "/images/route-versailles.jpg", alt: "Palace of Versailles courtyard at sunset" },
+  { id: "normandy", title: "Normandy (Omaha Beach Memorial)", meta: "Full day · ~3 h each way", filter: "Normandy", bullets: ["D-Day beaches & American Cemetery", "A favorite with US travelers"], pickup: "Le Marais hotel, Paris", dropoff: "Normandy American Cemetery", service: "private", thumb: "/images/route-normandy.jpg", alt: "Omaha Beach memorial sculpture on the sand" },
+  { id: "champagne", title: "Champagne (Reims / Épernay)", meta: "Full day · ~1 h 45 each way", filter: "Champagne", bullets: ["Visit champagne houses", "A strong New Year day trip"], pickup: "Le Marais hotel, Paris", dropoff: "Champagne, Reims", service: "private", thumb: "/images/route-champagne.jpg", alt: "Ripe grapes on the vine in a Champagne vineyard" },
 ] as const;
 
 const FILTERS = ["All", "CDG", "Orly", "Beauvais", "Disneyland", "Versailles", "Normandy", "Champagne"];
 
 const REVIEWS = [
-  { id: "sarah", quote: "He was right there with my name!", name: "Sarah, Toronto", trip: "Private Trip · Normandy", duration: "", poster: "/images/review-sarah-thumb.jpg", alt: "Travelers beside a black van", video: "/videos/review-sarah.71f0d5fd.mp4" },
-  { id: "millers", quote: "Car seats ready for both kids.", name: "Matt, New York", trip: "Private Trip · Mont Saint-Michel", duration: "0:41", poster: "/images/review-millers-thumb.jpg", alt: "Traveler beside a black van", video: "/videos/review-millers.b7937428.mp4" },
-  { id: "james", quote: "Unforgettable D-Day tour.", name: "Adam, Chicago", trip: "Airport Transfer CDG", duration: "0:28", poster: "/images/review-james-thumb.jpg", alt: "Traveler on a Normandy day trip", video: "/videos/review-james.23ad4b43.mp4" },
+  { id: "sarah", quote: "He was right there with my name!", name: "Sarah, Toronto", trip: "Private Trip · Normandy", duration: "", video: "/videos/review-james.23ad4b43.mp4" },
+  { id: "millers", quote: "Car seats ready for both kids.", name: "Matt, New York", trip: "Private Trip · Mont Saint-Michel", duration: "0:41", video: "/videos/review-sarah.71f0d5fd.mp4" },
+  { id: "james", quote: "Unforgettable D-Day tour.", name: "Adam, Chicago", trip: "Airport Transfer CDG", duration: "0:28", video: "/videos/review-millers.b7937428.mp4" },
 ];
 
 const FAQ = [
@@ -86,6 +86,17 @@ type Trip = {
 type Contact = { name: string; email: string; mobile: string; contactPref: string };
 
 const FILLER: Contact = { name: "Alex Traveler", email: "alex@example.com", mobile: "2125550100", contactPref: "text" };
+
+function showStill(node: HTMLVideoElement | null) {
+  if (!node || node.dataset.framed === "1") return;
+  const frame = () => {
+    if (node.dataset.framed === "1" || node.readyState < 1) return;
+    node.dataset.framed = "1";
+    if (node.currentTime < 0.2) node.currentTime = 0.4;
+  };
+  if (node.readyState >= 1) frame();
+  else node.addEventListener("loadedmetadata", frame, { once: true });
+}
 
 function Picture({ src, alt, className, priority }: { src: string; alt: string; className?: string; priority?: boolean }) {
   const photo = PHOTO[src];
@@ -402,10 +413,10 @@ export default function MobileHome() {
           {REVIEWS.map((review) => (
             <article className="m-videoCard" key={review.id}>
               {playing === review.id ? (
-                <video className="m-poster" controls autoPlay playsInline poster={PHOTO[review.poster]?.src} src={review.video} />
+                <video className="m-poster" controls autoPlay playsInline src={review.video} />
               ) : (
                 <button className="m-poster" type="button" aria-label={`Play review from ${review.name}`} onClick={() => setPlaying(review.id)}>
-                  <Picture src={review.poster} alt={review.alt} />
+                  <video className="m-still" ref={showStill} src={`${review.video}#t=0.4`} muted playsInline preload="auto" tabIndex={-1} aria-hidden="true" />
                   {review.duration ? <span className="m-ccRow"><span className="m-cc">CC EN</span><span className="m-dur">{review.duration}</span></span> : null}
                   <img className="m-play" src="/icons/play.svg" alt="" width={48} height={48} />
                   <span className="m-quoteOverlay">“{review.quote}”</span>
@@ -441,7 +452,6 @@ export default function MobileHome() {
               <p className="m-fares">Compact SUV $120 · Premium Van $170 · Big Van $280 · Save $50</p>
               <ul>{route.bullets.map((bullet) => <li key={bullet}>• {bullet}</li>)}</ul>
               <button className="m-btn" type="button" onClick={() => bookRoute(route)}>Book this route</button>
-              <button className="m-seo" type="button" onClick={() => bookRoute(route)}>{route.seo}</button>
             </article>
           ))}
         </div>
