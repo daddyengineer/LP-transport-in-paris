@@ -596,7 +596,7 @@ export default function MobileHome() {
               <h3>Plan your ride</h3>
               <label className="m-field"><span>Service type</span>
                 <div className="m-choice">
-                  {[["airport", "Airport"], ["private", "Private trip"], ["hourly", "Hourly"]].map(([id, label]) => (
+                  {[["airport", "Airport"], ["private", "Private trip"]].map(([id, label]) => (
                     <button key={id} type="button" className={current.service === id ? "isOn" : ""} onClick={() => patchTrip({ service: id })}>{label}</button>
                   ))}
                 </div>
