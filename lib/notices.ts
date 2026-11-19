@@ -102,6 +102,8 @@ export async function deliverBookingNotices(quote: ValidQuote, quoteId: string):
   }
 }
 
+const SITE = "https://www.transportinparis.com";
+
 function usdAmount(amountUsd: number | null, priceUsd: string): string {
   if (amountUsd != null && Number.isFinite(amountUsd)) {
     return `USD ${Number.isInteger(amountUsd) ? String(amountUsd) : amountUsd.toFixed(2)}`;
@@ -110,19 +112,35 @@ function usdAmount(amountUsd: number | null, priceUsd: string): string {
   return stored ? `USD ${stored}` : "USD —";
 }
 
+function serviceLabel(service: string): string {
+  const value = oneLine(service);
+  if (value === "airport") return "Airport";
+  if (value === "private") return "Private trip";
+  if (value === "hourly") return "Hourly";
+  return value;
+}
+
 export function paymentOrderMerge(quote: StoredQuote, quoteId: string, amountUsd: number | null): Record<string, string> {
-  const amount = usdAmount(amountUsd, quote.priceUsd);
-  const id = oneLine(quoteId);
   return {
-    name: oneLine(quote.name),
-    route: [oneLine(quote.pickup), oneLine(quote.dropoff)].filter(Boolean).join(" to "),
-    date: [oneLine(quote.date), oneLine(quote.time)].filter(Boolean).join(" "),
-    vehicle: oneLine(quote.vehicle),
-    usd_amount: amount,
-    amount,
-    "USD amount": amount,
-    quote_id: id,
-    "quote id": id,
+    "Booking ID": oneLine(quoteId),
+    "First Name": oneLine(quote.name),
+    Service: serviceLabel(quote.service),
+    Date: oneLine(quote.date),
+    "Pickup Time": oneLine(quote.time),
+    "Pickup Address and Meeting Point": oneLine(quote.pickup),
+    "Drop-off Address": oneLine(quote.dropoff),
+    "Flight Number": oneLine(quote.flight),
+    Passengers: oneLine(quote.passengers),
+    Luggage: oneLine(quote.luggage),
+    Vehicle: oneLine(quote.vehicle),
+    "Total Price": usdAmount(amountUsd, quote.priceUsd),
+    "Payment Status": "paid",
+    "Company Legal Name": "Travel Kif SAS",
+    "Company Address": "Based in Paris",
+    "Cancellation Policy Link": `${SITE}/#faq`,
+    "Privacy Policy URL": `${SITE}/`,
+    "Manage Booking URL": `${SITE}/#quote`,
+    "Unsubscribe URL": "mailto:bonjour@transportinparis.com",
   };
 }
 

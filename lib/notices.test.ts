@@ -29,8 +29,8 @@ function sampleInput(): QuoteInput {
 
 function stored(patch: Partial<StoredQuote> = {}): StoredQuote {
   return {
-    quoteId: "q_test", name: "Notice Test", email: "guest@example.com", pickup: "CDG", dropoff: "Paris",
-    date: "11/20/2026", time: "10:00 AM", passengers: "2", vehicle: "Premium Van", priceUsd: "170",
+    quoteId: "q_test", name: "Notice Test", email: "guest@example.com", service: "airport", pickup: "CDG", dropoff: "Paris",
+    date: "11/20/2026", time: "10:00 AM", flight: "AF123", passengers: "2", luggage: "1", vehicle: "Premium Van", priceUsd: "170",
     paymentStatus: "paid", invoiceSent: "", paymentNoticeSent: "", reminderSent: "", ...patch,
   };
 }
@@ -143,13 +143,27 @@ test("order confirmation uses the existing template and quote fields", async () 
   }) as typeof fetch;
   try {
     const merge = paymentOrderMerge(stored(), "q_test", 170);
-    assert.equal(merge.name, "Notice Test");
-    assert.equal(merge.route, "CDG to Paris");
-    assert.equal(merge.date, "11/20/2026 10:00 AM");
-    assert.equal(merge.vehicle, "Premium Van");
-    assert.equal(merge.usd_amount, "USD 170");
-    assert.equal(merge.quote_id, "q_test");
-    assert.equal(paymentOrderMerge(stored({ priceUsd: "180" }), "q_test", null).usd_amount, "USD 180");
+    assert.equal(merge["Booking ID"], "q_test");
+    assert.equal(merge["First Name"], "Notice Test");
+    assert.equal(merge.Service, "Airport");
+    assert.equal(merge.Date, "11/20/2026");
+    assert.equal(merge["Pickup Time"], "10:00 AM");
+    assert.equal(merge["Pickup Address and Meeting Point"], "CDG");
+    assert.equal(merge["Drop-off Address"], "Paris");
+    assert.equal(merge["Flight Number"], "AF123");
+    assert.equal(merge.Passengers, "2");
+    assert.equal(merge.Luggage, "1");
+    assert.equal(merge.Vehicle, "Premium Van");
+    assert.equal(merge["Total Price"], "USD 170");
+    assert.equal(merge["Payment Status"], "paid");
+    assert.equal(merge["Company Legal Name"], "Travel Kif SAS");
+    assert.equal(merge["Company Address"], "Based in Paris");
+    assert.equal(merge["Cancellation Policy Link"], "https://www.transportinparis.com/#faq");
+    assert.equal(merge["Privacy Policy URL"], "https://www.transportinparis.com/");
+    assert.equal(merge["Manage Booking URL"], "https://www.transportinparis.com/#quote");
+    assert.equal(merge["Unsubscribe URL"], "mailto:bonjour@transportinparis.com");
+    assert.equal(paymentOrderMerge(stored({ priceUsd: "180", flight: "" }), "q_test", null)["Total Price"], "USD 180");
+    assert.equal(paymentOrderMerge(stored({ flight: "" }), "q_test", 170)["Flight Number"], "");
     const result = await sendTemplateEmail({
       to: "guest@example.com",
       toName: "Notice Test",
@@ -158,19 +172,34 @@ test("order confirmation uses the existing template and quote fields", async () 
       clientReference: "q_test-order",
     });
     assert.equal(result.ok, true);
-    assert.equal(url, "https://cpaas.zoho.com/v1.1/email/template");
-    const parsed = JSON.parse(body) as { template_key?: string; subject?: string; htmlbody?: string; textbody?: string; merge_info?: Record<string, string>; to?: { merge_info?: Record<string, string> }[] };
+    assert.equal(url, "https://cpaas.zoho.com/v1.1/email/template/batch");
+    const parsed = JSON.parse(body) as {
+      template_key?: string;
+      subject?: string;
+      htmlbody?: string;
+      textbody?: string;
+      merge_info?: Record<string, string>;
+      from?: { address?: string; name?: string };
+      cc?: unknown;
+      bcc?: unknown;
+      to?: { email_address?: { address?: string }; merge_info?: Record<string, string> }[];
+    };
     assert.equal(parsed.template_key, ORDER_CONFIRMATION_TEMPLATE_KEY);
+    assert.equal(parsed.from?.address, "noreply@transportinparis.com");
+    assert.equal(parsed.from?.name, "noreply");
     assert.equal(parsed.subject, undefined);
     assert.equal(parsed.htmlbody, undefined);
     assert.equal(parsed.textbody, undefined);
-    assert.equal(parsed.merge_info?.name, "Notice Test");
-    assert.equal(parsed.merge_info?.route, "CDG to Paris");
-    assert.equal(parsed.merge_info?.usd_amount, "USD 170");
-    assert.equal(parsed.merge_info?.quote_id, "q_test");
-    assert.equal(parsed.merge_info?.vehicle, "Premium Van");
-    assert.equal(parsed.to?.[0]?.merge_info, undefined);
-    assert.doesNotMatch(body, /unit-test-value|Your Paris transfer invoice/);
+    assert.equal(parsed.merge_info, undefined);
+    assert.equal(parsed.cc, undefined);
+    assert.equal(parsed.bcc, undefined);
+    assert.equal(parsed.to?.length, 1);
+    assert.equal(parsed.to?.[0]?.email_address?.address, "guest@example.com");
+    assert.equal(parsed.to?.[0]?.merge_info?.["Booking ID"], "q_test");
+    assert.equal(parsed.to?.[0]?.merge_info?.["Total Price"], "USD 170");
+    assert.equal(parsed.to?.[0]?.merge_info?.["Drop-off Address"], "Paris");
+    assert.equal(parsed.to?.[0]?.merge_info?.["Pickup Address and Meeting Point"], "CDG");
+    assert.doesNotMatch(body, /unit-test-value|Your Paris transfer invoice|accounts@info.zylker.com|manager@zylker.com/);
     delete process.env.ZOHO_CPAAS_AGENT_ALIAS;
     const missing = await sendTemplateEmail({
       to: "guest@example.com", toName: "Notice Test", templateKey: ORDER_CONFIRMATION_TEMPLATE_KEY, mergeInfo: merge, clientReference: "q_test-order",

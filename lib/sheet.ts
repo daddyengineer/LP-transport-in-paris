@@ -130,11 +130,14 @@ export type StoredQuote = {
   quoteId: string;
   name: string;
   email: string;
+  service: string;
   pickup: string;
   dropoff: string;
   date: string;
   time: string;
+  flight: string;
   passengers: string;
+  luggage: string;
   vehicle: string;
   priceUsd: string;
   paymentStatus: string;
@@ -150,11 +153,14 @@ function storedQuote(headers: string[], row: string[]): StoredQuote | null {
     quoteId,
     name: cell(row, headers, "name"),
     email: cell(row, headers, "email"),
+    service: cell(row, headers, "service"),
     pickup: cell(row, headers, "pickup"),
     dropoff: cell(row, headers, "dropoff"),
     date: cell(row, headers, "date"),
     time: cell(row, headers, "time"),
+    flight: cell(row, headers, "flight"),
     passengers: cell(row, headers, "passengers"),
+    luggage: cell(row, headers, "luggage"),
     vehicle: cell(row, headers, "vehicle"),
     priceUsd: cell(row, headers, "price_usd"),
     paymentStatus: cell(row, headers, "payment_status"),

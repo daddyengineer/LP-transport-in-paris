@@ -4,6 +4,7 @@ export type MailResult =
   | { ok: false; reason: "rejected"; httpStatus: number; errorCode: string };
 
 export const MAIL_FROM = { address: "bonjour@transportinparis.com", name: "Transport in Paris" };
+export const ORDER_FROM = { address: "noreply@transportinparis.com", name: "noreply" };
 
 type ZohoConfig = { host: string; authorization: string };
 
@@ -44,7 +45,7 @@ function recipient(to: string, toName: string): { address: string; name: string 
   return { address, name: toName.trim() || address };
 }
 
-async function postMail(path: "/v1.1/email" | "/v1.1/email/template", body: unknown, fetchImpl: typeof fetch): Promise<MailResult> {
+async function postMail(path: "/v1.1/email" | "/v1.1/email/template/batch", body: unknown, fetchImpl: typeof fetch): Promise<MailResult> {
   const config = zohoConfig();
   if (!config) return { ok: false, reason: "not-connected" };
   let response: Response;
@@ -110,15 +111,14 @@ export async function sendTemplateEmail(input: {
   if (!templateKey || /\s/.test(templateKey)) return { ok: false, reason: "rejected", httpStatus: 0, errorCode: "no-template" };
   const mergeInfo: Record<string, string> = {};
   for (const [key, value] of Object.entries(input.mergeInfo)) {
-    if (!/^[A-Za-z0-9_ ]{1,40}$/.test(key)) continue;
+    if (!/^[A-Za-z0-9_ -]{1,60}$/.test(key)) continue;
     mergeInfo[key] = value.replace(/[\r\n]+/g, " ").trim().slice(0, 300);
   }
-  return postMail("/v1.1/email/template", {
+  return postMail("/v1.1/email/template/batch", {
     template_key: templateKey,
-    from: MAIL_FROM,
-    to: [{ email_address: to }],
+    from: ORDER_FROM,
+    to: [{ email_address: to, merge_info: mergeInfo }],
     reply_to: [{ address: MAIL_FROM.address, name: MAIL_FROM.name }],
-    merge_info: mergeInfo,
     client_reference: input.clientReference.slice(0, 100),
     track_clicks: false,
     track_opens: false,
