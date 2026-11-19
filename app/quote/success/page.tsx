@@ -48,7 +48,16 @@ export default async function QuoteSuccessPage({ searchParams }: { searchParams:
       <p>Quote <strong>{session.quoteId || "—"}</strong></p>
       {sheetNote ? <p>{sheetNote}</p> : null}
       <p>Card, Apple Pay, and Google Pay stay on Stripe. This page does not show a card number.</p>
-      <a href="/#quote">Back to the quote</a>
+      {session.paid ? <p>Thank you for your order. You will receive an order confirmation at the corresponding email shortly.</p> : null}
+      <div style={actions}>
+        <a href="/#quote">Back to the quote</a>
+        <a href="https://www.transportinparis.com/" style={homeButton}>Back to homepage</a>
+      </div>
+      <p style={stripeMark}>
+        <img src="/icons/shield.svg" alt="" width={22} height={22} />
+        <img src="/pay/stripe.svg" alt="" width={48} height={30} />
+        <span>Stripe Secure Payment</span>
+      </p>
     </main>
   );
 }
@@ -60,4 +69,33 @@ const card: React.CSSProperties = {
   background: "#fff7f4",
   color: "#642003",
   fontFamily: "var(--font-inter), Inter, sans-serif",
+};
+
+const actions: React.CSSProperties = {
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "flex-start",
+  gap: 12,
+  marginTop: 8,
+};
+
+const homeButton: React.CSSProperties = {
+  display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "center",
+  minHeight: 48,
+  padding: "12px 24px",
+  borderRadius: 999,
+  background: "#642003",
+  color: "#fff",
+  fontWeight: 600,
+  textDecoration: "none",
+};
+
+const stripeMark: React.CSSProperties = {
+  display: "flex",
+  alignItems: "center",
+  gap: 10,
+  marginTop: 24,
+  fontWeight: 600,
 };
