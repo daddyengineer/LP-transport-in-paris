@@ -1,6 +1,6 @@
 import { testSecretKey, usdCents } from "@/lib/quote";
 
-export type PaidSession = { id: string; paid: boolean; amountUsd: number | null; quoteId: string };
+export type PaidSession = { id: string; paid: boolean; amountUsd: number | null; quoteId: string; receiptUrl: string };
 
 const CHECKOUT_RETURN_HOSTS = new Set([
   "www.transportinparis.com",
@@ -76,6 +76,29 @@ export async function createPaymentSession(input: {
   return session.url;
 }
 
+function receiptUrl(value: unknown): string {
+  if (!value || typeof value !== "object") return "";
+  const intent = (value as { payment_intent?: unknown }).payment_intent;
+  if (!intent || typeof intent !== "object") return "";
+  const charge = (intent as { latest_charge?: unknown }).latest_charge;
+  if (!charge || typeof charge !== "object") return "";
+  const url = (charge as { receipt_url?: unknown }).receipt_url;
+  return typeof url === "string" && url.startsWith("https://") ? url : "";
+}
+
+async function readReceiptUrl(sessionId: string, key: string): Promise<string> {
+  try {
+    const response = await fetch(`https://api.stripe.com/v1/checkout/sessions/${sessionId}?expand[]=payment_intent.latest_charge`, {
+      headers: { Authorization: `Bearer ${key}` },
+      cache: "no-store",
+    });
+    if (!response.ok) return "";
+    return receiptUrl(await response.json());
+  } catch {
+    return "";
+  }
+}
+
 export async function readPaidSession(sessionId: string): Promise<PaidSession | null> {
   if (!/^cs_(?:test|live)_[A-Za-z0-9]+$/.test(sessionId)) return null;
   const key = secret();
@@ -91,10 +114,12 @@ export async function readPaidSession(sessionId: string): Promise<PaidSession | 
   const session = (await response.json()) as {
     id?: string; payment_status?: string; amount_total?: number | null; currency?: string; metadata?: { quote_id?: string };
   };
+  const paid = session.payment_status === "paid" && session.currency === "usd";
   return {
     id: session.id || sessionId,
-    paid: session.payment_status === "paid" && session.currency === "usd",
+    paid,
     amountUsd: typeof session.amount_total === "number" ? session.amount_total / 100 : null,
     quoteId: session.metadata?.quote_id?.trim() || "",
+    receiptUrl: paid ? await readReceiptUrl(sessionId, key) : "",
   };
 }

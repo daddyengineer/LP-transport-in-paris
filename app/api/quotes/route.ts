@@ -1,10 +1,12 @@
 import { randomBytes } from "crypto";
 import { NextResponse } from "next/server";
+import { deliverBookingNotices } from "@/lib/notices";
 import { readQuoteBody, validateQuote, type ValidQuote } from "@/lib/quote";
 import { appendUnpaidQuote, type SheetRow } from "@/lib/sheet";
 import { checkoutConnected, checkoutReturnOrigin, createPaymentSession } from "@/lib/stripe";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 30;
 
 function rowFor(quote: ValidQuote, quoteId: string): SheetRow {
   return {
@@ -54,6 +56,12 @@ export async function POST(request: Request) {
     console.error("quote row was not written", error instanceof Error ? error.message : "sheet");
     const checkout = checkoutConnected() ? "" : " Checkout is not connected. No card was charged.";
     return NextResponse.json({ ok: false, saved: false, message: `This quote was not saved to the Google Sheet.${checkout}` }, { status: 503 });
+  }
+
+  try {
+    await deliverBookingNotices(validated.quote, quoteId);
+  } catch {
+    console.error("booking notices were not sent");
   }
 
   const price = validated.quote.price;

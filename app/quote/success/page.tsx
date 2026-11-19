@@ -1,7 +1,9 @@
+import { deliverPaymentNotices } from "@/lib/notices";
 import { markQuotePaid, sheetConfigured } from "@/lib/sheet";
 import { checkoutConnected, readPaidSession } from "@/lib/stripe";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 30;
 
 export default async function QuoteSuccessPage({ searchParams }: { searchParams: Promise<{ session_id?: string }> }) {
   const { session_id: sessionId = "" } = await searchParams;
@@ -31,6 +33,11 @@ export default async function QuoteSuccessPage({ searchParams }: { searchParams:
       sheetNote = updated ? "This quote is marked paid." : "Stripe confirmed the payment. The sheet row was not updated.";
     } catch {
       sheetNote = "Stripe confirmed the payment. The sheet row was not updated.";
+    }
+    try {
+      await deliverPaymentNotices({ quoteId: session.quoteId, amountUsd: session.amountUsd, receiptUrl: session.receiptUrl });
+    } catch {
+      console.error("payment notices were not sent");
     }
   }
   const amount = session.amountUsd == null ? "—" : new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(session.amountUsd);
