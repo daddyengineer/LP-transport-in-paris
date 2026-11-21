@@ -50,9 +50,9 @@ const ROUTES = [
 const FILTERS = ["All", "CDG", "Orly", "Beauvais", "Disneyland", "Versailles", "Normandy", "Champagne"];
 
 const REVIEWS = [
-  { id: "sarah", quote: "He was right there with my name!", name: "Sarah, Toronto", trip: "Private Trip · Normandy", duration: "", video: "/videos/review-james.23ad4b43.mp4" },
-  { id: "millers", quote: "Car seats ready for both kids.", name: "Matt, New York", trip: "Private Trip · Mont Saint-Michel", duration: "0:41", video: "/videos/review-sarah.71f0d5fd.mp4" },
-  { id: "james", quote: "Unforgettable D-Day tour.", name: "Adam, Chicago", trip: "Airport Transfer CDG", duration: "0:28", video: "/videos/review-millers.b7937428.mp4" },
+  { id: "sarah", quote: "He was right there with my name!", name: "Matt, New York", trip: "Normandy Day Trip", duration: "0:32", video: "/videos/review-sarah.71f0d5fd.mp4" },
+  { id: "millers", quote: "Car seats ready for both kids.", name: "The Millers, Chicago", trip: "Disneyland Paris transfer", duration: "0:41", video: "/videos/review-millers.b7937428.mp4" },
+  { id: "james", quote: "Unforgettable D-Day tour.", name: "James, Seattle", trip: "Private Trip · Normandy", duration: "0:28", video: "/videos/review-james.23ad4b43.mp4" },
 ];
 
 const FAQ = [
@@ -62,7 +62,7 @@ const FAQ = [
   { q: "Do I tip the driver?", a: "Tipping is welcome and never required. A common thank-you from North American travelers is about 5–10% in cash." },
   { q: "Can I get a child seat?", a: "Yes. Infant and booster seats are free. Add the children’s ages in the notes and we bring the right seat." },
   { q: "What if my flight is late?", a: "We track the flight. Waiting is free for 60 minutes after landing at CDG and Orly, including when the inbound flight is delayed." },
-  { q: "Can I pay in USD?", a: "Yes. The price you see is a fixed amount in USD. Card checkout is Stripe. Until that key is connected, the Pay button saves the quote and does not charge a card." },
+  { q: "Can I pay in USD?", a: "Pay securely by card, Apple Pay or Google Pay via Stripe. Charged in USD." },
   { q: "What's the cancellation policy?", a: "Free cancellation up to 24 hours before pickup." },
   { q: "Why not just use Uber?", a: "From the airport, a private transfer is a fixed price, a meet and greet inside arrivals, and a vehicle sized for the luggage. Rideshare pickup is outside the terminal, and the fare can surge." },
 ];
