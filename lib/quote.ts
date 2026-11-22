@@ -1,10 +1,10 @@
 export const VEHICLES = [
-  { id: "premium-van", name: "Premium Van", pax: 7, bags: 7, fromPrice: 170 },
-  { id: "vip-van", name: "VIP Van", pax: 8, bags: 8, fromPrice: 180 },
-  { id: "economy-van", name: "Economy Van", pax: 7, bags: 6, fromPrice: 150 },
-  { id: "compact-suv", name: "Compact SUV", pax: 3, bags: 4, fromPrice: 120 },
-  { id: "big-van", name: "Big Van", pax: 16, bags: 12, fromPrice: 280 },
-  { id: "luxury-sedan", name: "Luxury Sedan", pax: 3, bags: 3, fromPrice: 350 },
+  { id: "premium-van", name: "Premium Van", pax: 7, bags: 7, fromPrice: 210 },
+  { id: "vip-van", name: "VIP Van", pax: 8, bags: 8, fromPrice: 230 },
+  { id: "economy-van", name: "Economy Van", pax: 7, bags: 6, fromPrice: 175 },
+  { id: "compact-suv", name: "Compact SUV", pax: 3, bags: 4, fromPrice: 140 },
+  { id: "big-van", name: "Big Van", pax: 16, bags: 12, fromPrice: 360 },
+  { id: "luxury-sedan", name: "Luxury Sedan", pax: 3, bags: 3, fromPrice: 300 },
 ] as const;
 
 export type Vehicle = (typeof VEHICLES)[number];
