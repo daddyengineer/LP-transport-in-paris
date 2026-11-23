@@ -36,13 +36,13 @@ const TIMES = (() => {
 })();
 
 const ROUTES = [
-  { id: "cdg", title: "CDG (Charles de Gaulle)", meta: "~45–60 min · 30 km", filter: "CDG", bullets: ["Meet & greet inside arrivals", "Terminal guide 2E / 2F / 1", "Free waiting if flight is delayed"], pickup: "CDG · Paris Charles de Gaulle Airport", dropoff: "Le Marais hotel, Paris", service: "airport", thumb: "/images/route-cdg.jpg", alt: "Aircraft at a jet bridge during sunset" },
-  { id: "ory", title: "Orly (ORY)", meta: "~35–45 min · 18 km", filter: "Orly", bullets: ["Pickup at Orly 1–4", "Intra-Europe & US connections"], pickup: "ORY · Paris Orly Airport", dropoff: "Le Marais hotel, Paris", service: "airport", thumb: "/images/route-orly.jpg", alt: "Paris Orly terminal at dusk" },
-  { id: "bva", title: "Beauvais (BVA)", meta: "~75–90 min · 85 km", filter: "Beauvais", bullets: ["Far more comfortable than the shuttle bus", "Door-to-door, fixed price"], pickup: "BVA · Paris Beauvais Airport", dropoff: "Le Marais hotel, Paris", service: "airport", thumb: "/images/route-beauvais.jpg", alt: "Beauvais airport terminal and control tower" },
-  { id: "disney", title: "Disneyland Paris", meta: "~45 min · 40 km", filter: "Disneyland", bullets: ["Free child seats, large family vans", "Direct from CDG or your Paris hotel"], pickup: "Le Marais hotel, Paris", dropoff: "Disneyland Paris", service: "private", thumb: "/images/route-disney.jpg", alt: "Disneyland Paris castle lit at night" },
-  { id: "versailles", title: "Versailles", meta: "Half-day · ~40 min each way", filter: "Versailles", bullets: ["Driver waits during your visit", "Palace ticket option"], pickup: "Le Marais hotel, Paris", dropoff: "Palace of Versailles", service: "private", thumb: "/images/route-versailles.jpg", alt: "Palace of Versailles courtyard at sunset" },
-  { id: "normandy", title: "Normandy (Omaha Beach Memorial)", meta: "Full day · ~3 h each way", filter: "Normandy", bullets: ["D-Day beaches & American Cemetery", "A favorite with US travelers"], pickup: "Le Marais hotel, Paris", dropoff: "Normandy American Cemetery", service: "private", thumb: "/images/route-normandy.jpg", alt: "Omaha Beach memorial sculpture on the sand" },
-  { id: "champagne", title: "Champagne (Reims / Épernay)", meta: "Full day · ~1 h 45 each way", filter: "Champagne", bullets: ["Visit champagne houses", "A strong New Year day trip"], pickup: "Le Marais hotel, Paris", dropoff: "Champagne, Reims", service: "private", thumb: "/images/route-champagne.jpg", alt: "Ripe grapes on the vine in a Champagne vineyard" },
+  { id: "cdg", title: "CDG (Charles de Gaulle)", meta: "~45–60 min · 30 km", filter: "CDG", fares: [140, 210, 360], bullets: ["Meet & greet inside arrivals", "Terminal guide 2E / 2F / 1", "Free waiting if flight is delayed"], pickup: "CDG · Paris Charles de Gaulle Airport", dropoff: "Le Marais hotel, Paris", service: "airport", thumb: "/images/route-cdg.jpg", alt: "Aircraft at a jet bridge during sunset" },
+  { id: "ory", title: "Orly (ORY)", meta: "~35–45 min · 18 km", filter: "Orly", fares: [130, 195, 340], bullets: ["Pickup at Orly 1–4", "Intra-Europe & US connections"], pickup: "ORY · Paris Orly Airport", dropoff: "Le Marais hotel, Paris", service: "airport", thumb: "/images/route-orly.jpg", alt: "Paris Orly terminal at dusk" },
+  { id: "bva", title: "Beauvais (BVA)", meta: "~75–90 min · 85 km", filter: "Beauvais", fares: [240, 320, 520], bullets: ["Far more comfortable than the shuttle bus", "Door-to-door, fixed price"], pickup: "BVA · Paris Beauvais Airport", dropoff: "Le Marais hotel, Paris", service: "airport", thumb: "/images/route-beauvais.jpg", alt: "Beauvais airport terminal and control tower" },
+  { id: "disney", title: "Disneyland Paris", meta: "~45 min · 40 km", filter: "Disneyland", fares: [275, 400, 690], bullets: ["Free child seats, large family vans", "Direct from CDG or your Paris hotel"], pickup: "Le Marais hotel, Paris", dropoff: "Disneyland Paris", service: "private", thumb: "/images/route-disney.jpg", alt: "Disneyland Paris castle lit at night" },
+  { id: "versailles", title: "Versailles", meta: "Half-day · ~40 min each way", filter: "Versailles", fares: [450, 580, 850], bullets: ["Driver waits during your visit", "Palace ticket option"], pickup: "Le Marais hotel, Paris", dropoff: "Palace of Versailles", service: "private", thumb: "/images/route-versailles.jpg", alt: "Palace of Versailles courtyard at sunset" },
+  { id: "normandy", title: "Normandy (Omaha Beach Memorial)", meta: "Full day · ~3 h each way", filter: "Normandy", fares: [1050, 1350, 1950], bullets: ["D-Day beaches & American Cemetery", "A favorite with US travelers"], pickup: "Le Marais hotel, Paris", dropoff: "Normandy American Cemetery", service: "private", thumb: "/images/route-normandy.jpg", alt: "Omaha Beach memorial sculpture on the sand" },
+  { id: "champagne", title: "Champagne (Reims / Épernay)", meta: "Full day · ~1 h 45 each way", filter: "Champagne", fares: [140, 210, 360], bullets: ["Visit champagne houses", "A strong New Year day trip"], pickup: "Le Marais hotel, Paris", dropoff: "Champagne, Reims", service: "private", thumb: "/images/route-champagne.jpg", alt: "Ripe grapes on the vine in a Champagne vineyard" },
 ] as const;
 
 const FILTERS = ["All", "CDG", "Orly", "Beauvais", "Disneyland", "Versailles", "Normandy", "Champagne"];
@@ -570,7 +570,7 @@ export default function MobileHome() {
                   <p className="m-routeMeta">{route.meta}</p>
                 </div>
               </div>
-              <p className="m-fares">Compact SUV $140 · Premium Van $210 · Big Van $360</p>
+              <p className="m-fares">Compact SUV {money(route.fares[0])} · Premium Van {money(route.fares[1])} · Big Van {money(route.fares[2])}</p>
               <ul>{route.bullets.map((bullet) => <li key={bullet}>• {bullet}</li>)}</ul>
               <button className="m-btn" type="button" onClick={() => bookRoute(route)}>Book this route</button>
             </article>

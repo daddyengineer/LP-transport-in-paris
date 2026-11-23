@@ -60,7 +60,7 @@
 .home_field__msjf7 select{flex:1;min-width:140px}
 .home_picture__pic{display:contents}
 
-#fleet .home_fleetCard__YQty8{grid-template-columns:120px minmax(0,1fr) auto}
+#fleet .home_fleetCard__YQty8{grid-template-columns:120px minmax(0,1fr) auto}#fleet .home_fleetCard__YQty8{transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease}#fleet .home_fleetCard__YQty8:hover{transform:translateY(-4px);border-color:#f94b00;box-shadow:0 10px 24px rgba(99,33,3,.14)}
 #fleet .home_priceCol__8LdP7{min-width:0}
 #fleet .home_picture__pic{display:flex;align-items:center;justify-content:center;width:120px;height:100px;min-width:120px;padding:0 4px;box-sizing:border-box;border:1px dashed #d9c7bd;border-radius:12px;background:#fff;overflow:hidden}
 #fleet .home_fleetPhoto__PMahr{width:100%;height:100%;max-width:none;padding:0;border:0;background:transparent;object-fit:contain}#fleet img.home_fleetPhoto__PMahr[src*=fleet-compact-suv]{transform:scaleX(-1)}
