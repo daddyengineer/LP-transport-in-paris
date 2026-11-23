@@ -428,7 +428,7 @@ export default function MobileHome() {
                 <div className="m-fleetPhoto"><Picture src={item.image} alt={item.alt} /></div>
                 <div className="m-fleetBody">
                   <div className="m-badges">{item.badges.map((badge) => <span key={badge}>{badge}</span>)}</div>
-                  <p className="m-priceLine"><small>from</small><s>{money(item.priorPrice)}</s><b>{money(item.fromPrice)}</b><span className="m-per">/ transfer</span></p>
+                  <p className="m-priceLine"><small>from</small><b>{money(item.fromPrice)}</b><span className="m-per">/ transfer</span></p>
                   <div className="m-fleetCopy">
                     <p className="m-cap"><span>Pax: {item.pax}</span><span>Bags: {item.bags}</span></p>
                     <h3>{item.name}</h3>
@@ -572,7 +572,7 @@ export default function MobileHome() {
                   <p className="m-routeMeta">{route.meta}</p>
                 </div>
               </div>
-              <p className="m-fares">Compact SUV $140 · Premium Van $210 · Big Van $360 · Save $50</p>
+              <p className="m-fares">Compact SUV $140 · Premium Van $210 · Big Van $360</p>
               <ul>{route.bullets.map((bullet) => <li key={bullet}>• {bullet}</li>)}</ul>
               <button className="m-btn" type="button" onClick={() => bookRoute(route)}>Book this route</button>
             </article>
