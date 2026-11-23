@@ -28,11 +28,9 @@ const PLACES = [
 const TIMES = (() => {
   const out: string[] = [];
   for (let hour = 0; hour < 24; hour += 1) {
-    for (const minute of [0, 15, 30, 45]) {
-      const suffix = hour < 12 ? "AM" : "PM";
-      const display = hour % 12 === 0 ? 12 : hour % 12;
-      out.push(`${display}:${minute.toString().padStart(2, "0")} ${suffix}`);
-    }
+    const suffix = hour < 12 ? "AM" : "PM";
+    const display = hour % 12 === 0 ? 12 : hour % 12;
+    out.push(`${display}:00 ${suffix}`);
   }
   return out;
 })();
@@ -646,7 +644,7 @@ export default function MobileHome() {
                 </div>
               ) : null}
               {peak(current.date) ? <p className="m-demand">High demand</p> : null}
-              <p className="m-help">Calendar picker · 15-min time slots · “High demand” label on Christmas & New Year dates</p>
+              <p className="m-help">Calendar picker · 1-hour time slots · “High demand” label on Christmas & New Year dates</p>
               {error ? <p className="m-error" role="alert">{error}</p> : null}
               <button className="m-btn" type="submit">See my price</button>
               <p className="m-chat">Questions? <a href={SMS}>Chat with us</a></p>
