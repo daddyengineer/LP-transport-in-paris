@@ -13,9 +13,9 @@ const FLEET = [
   { id: "premium-van", name: "Premium Van", model: "Mercedes V-Class or similar", pax: 7, bags: 7, fromPrice: 210, priorPrice: 220, badges: ["Child seat", "Wi-Fi", "Family"], image: "/images/fleet-premium-van.jpg", alt: "Black Mercedes V-Class" },
   { id: "vip-van", name: "VIP Van", model: "Mercedes Sprinter or similar", pax: 8, bags: 8, fromPrice: 230, priorPrice: 230, badges: ["Child seat", "Water", "Family"], image: "/images/fleet-vip-van.jpg", alt: "Black Mercedes Sprinter" },
   { id: "economy-van", name: "Economy Van", model: "Nissan Primastar or similar", pax: 7, bags: 6, fromPrice: 175, priorPrice: 200, badges: ["Child seat", "Water", "Family"], image: "/images/fleet-economy-van.jpg", alt: "Black economy van" },
-  { id: "compact-suv", name: "Compact SUV", model: "Lexus RX / Peugeot 5008 or similar", pax: 5, bags: 4, fromPrice: 140, priorPrice: 170, badges: ["Child seat", "Couple"], image: "/images/fleet-compact-suv.jpg", alt: "Black compact SUV" },
+  { id: "compact-suv", name: "Compact SUV", model: "Lexus RX / Peugeot 5008 or similar", pax: 5, bags: 2, fromPrice: 140, priorPrice: 170, badges: ["Child seat", "Couple"], image: "/images/fleet-compact-suv.jpg", alt: "Black compact SUV" },
   { id: "big-van", name: "Big Van", model: "Mercedes Sprinter or similar", pax: 16, bags: 12, fromPrice: 360, priorPrice: 330, badges: ["Big group", "Child seat", "Water"], image: "/images/fleet-vip-van.jpg", alt: "Black group van" },
-  { id: "luxury-sedan", name: "Luxury Sedan", model: "Mercedes E-Class or similar", pax: 3, bags: 3, fromPrice: 300, priorPrice: 400, badges: ["Water", "Wi-Fi", "Couple"], image: "/images/fleet-luxury-sedan.jpg", alt: "Black Mercedes sedan" },
+  { id: "luxury-sedan", name: "Luxury Sedan", model: "Mercedes E-Class or similar", pax: 3, bags: 2, fromPrice: 300, priorPrice: 400, badges: ["Water", "Wi-Fi", "Couple"], image: "/images/fleet-luxury-sedan.jpg", alt: "Black Mercedes sedan" },
 ] as const;
 
 const PLACES = [
