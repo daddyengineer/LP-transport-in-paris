@@ -48,9 +48,9 @@ const ROUTES = [
 const FILTERS = ["All", "CDG", "Orly", "Beauvais", "Disneyland", "Versailles", "Normandy", "Champagne"];
 
 const REVIEWS = [
-  { id: "sarah", quote: "He was right there with my name!", name: "Matt, New York", trip: "Normandy Day Trip", duration: "0:32", video: "/videos/review-sarah.71f0d5fd.mp4" },
-  { id: "millers", quote: "Car seats ready for both kids.", name: "The Millers, Chicago", trip: "Disneyland Paris transfer", duration: "0:41", video: "/videos/review-millers.b7937428.mp4" },
-  { id: "james", quote: "Unforgettable D-Day tour.", name: "James, Seattle", trip: "Private Trip · Normandy", duration: "0:28", video: "/videos/review-james.23ad4b43.mp4" },
+  { id: "sarah", quote: "He was right there with my name!", name: "Matt, New York", trip: "Private Trip · Mont Saint-Michel", duration: "0:32", video: "/videos/review-sarah.71f0d5fd.mp4" },
+  { id: "millers", quote: "Car seats ready for both kids.", name: "Adam, Chicago", trip: "Airport Transfer CDG", duration: "0:41", video: "/videos/review-millers.b7937428.mp4" },
+  { id: "james", quote: "Unforgettable D-Day tour.", name: "Sarah, Toronto", trip: "Private Trip · Normandy", duration: "0:28", video: "/videos/review-james.23ad4b43.mp4" },
 ];
 
 const FAQ = [
