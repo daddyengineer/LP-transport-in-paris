@@ -1,6 +1,11 @@
+import type { Metadata } from "next";
 import { deliverPaymentNotices } from "@/lib/notices";
 import { markQuotePaid, sheetConfigured } from "@/lib/sheet";
 import { checkoutConnected, readPaidSession } from "@/lib/stripe";
+
+export const metadata: Metadata = {
+  robots: { index: false, follow: false },
+};
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 30;
